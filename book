@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookStore - Your Study Partner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --dark-bg: #1f2937;
+            --dark-card: #374151;
+            --light-bg: #f9fafb;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            transition: background 0.3s ease;
+        }
+
+        body.light {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #1f2937;
+        }
+
+        body.dark {
+            background: #111827;
+            color: #f9fafb;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        body.light header {
+            background: rgba(255,255,255,0.9);
+        }
+
+        body.dark header {
+            background: rgba(31,41,55,0.9);
+            border-bottom: 1px solid #374151;
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .logo-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .icon-btn {
+            padding: 0.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+            font-size: 1.25rem;
+        }
+
+        body.light .icon-btn:hover {
+            background: #f3f4f6;
+        }
+
+        body.dark .icon-btn:hover {
+            background: #374151;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        body.light .search-box {
+            background: white;
+        }
+
+        body.dark .search-box {
+            background: var(--dark-card);
+        }
+
+        .search-box i {
+            margin-left: 1rem;
+            font-size: 1.5rem;
+            color: #9ca3af;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            background: transparent;
+        }
+
+        body.dark .search-box input {
+            color: white;
+        }
+
+        .filter-btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        /* Filters Panel */
+        .filters {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+            display: none;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .filters.show {
+            display: grid;
+        }
+
+        body.light .filters {
+            background: white;
+        }
+
+        body.dark .filters {
+            background: var(--dark-card);
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .filter-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            outline: none;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        body.dark .filter-group select {
+            background: #1f2937;
+            color: white;
+            border-color: #4b5563;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.875rem;
+            font-weight: bold;
+        }
+
+        .section-header i {
+            color: #fbbf24;
+        }
+
+        /* Books Grid */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Book Card */
+        .book-card {
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        body.light .book-card {
+            background: white;
+        }
+
+        body.dark .book-card {
+            background: var(--dark-card);
+        }
+
+        .book-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+        }
+
+        .book-card.featured {
+            border: 2px solid #fbbf24;
+        }
+
+        .book-cover {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background: #fbbf24;
+            color: black;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .favorite-btn.active {
+            background: #ef4444;
+            color: white;
+        }
+
+        .favorite-btn:not(.active) {
+            background: rgba(255,255,255,0.8);
+            color: #ef4444;
+        }
+
+        .book-info {
+            padding: 1rem;
+        }
+
+        .book-title {
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-meta {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-author {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-bottom: 0.75rem;
+        }
+
+        .book-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat i.fa-star {
+            color: #fbbf24;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #2563eb);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, var(--primary));
+            transform: scale(1.05);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669, #10b981);
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 3rem;
+            padding: 2rem 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        body.dark footer {
+            background: var(--dark-card);
+            border-color: #374151;
+        }
+
+        body.light footer {
+            background: white;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p {
+            color: #6b7280;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 1.25rem;
+        }
+
+        .social-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        body.dark .footer-bottom {
+            border-color: #374151;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6b7280;
+        }
+
+        .no-results i {
+            font-size: 4rem;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header-actions .icon-btn:not(.theme-toggle):not(.mobile-menu-btn) {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span class="logo-text">BookStore</span>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="icon-btn" title="Profile">
+                    <i class="fas fa-user"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Your Study Partner 📚</h1>
+        <p>Free Books, PDFs, Sample Papers & More!</p>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search books, authors, subjects..." onkeyup="filterBooks()">
+                <button class="filter-btn" onclick="toggleFilters()">
+                    <i class="fas fa-filter"></i>
+                    <span>Filters</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters" id="filters">
+        <div class="filter-group">
+            <label>Class</label>
+            <select id="classFilter" onchange="filterBooks()">
+                <option value="all">All Classes</option>
+                <option value="VI">Class VI</option>
+                <option value="VII">Class VII</option>
+                <option value="VIII">Class VIII</option>
+                <option value="IX">Class IX</option>
+                <option value="X">Class X</option>
+                <option value="XI">Class XI</option>
+                <option value="XII">Class XII</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Subject</label>
+            <select id="subjectFilter" onchange="filterBooks()">
+                <option value="all">All Subjects</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Science">Science</option>
+                <option value="English">English</option>
+                <option value="Social Science">Social Science</option>
+                <option value="All Subjects">All Subjects</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Featured Books -->
+        <section class="section">
+            <h2 class="section-header">
+                <i class="fas fa-fire"></i>
+                Featured Books
+            </h2>
+            <div class="books-grid" id="featuredBooks"></div>
+        </section>
+
+        <!-- All Books -->
+        <section class="section">
+            <h2 class="section-header">
+                All Books <span id="bookCount"></span>
+            </h2>
+            <div class="books-grid" id="allBooks"></div>
+            <div class="no-results" id="noResults" style="display: none;">
+                <i class="fas fa-book-open"></i>
+                <p style="font-size: 1.25rem;">No books found matching your criteria</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>About BookStore</h3>
+                    <p>Your one-stop destination for free educational resources, PDFs, and study materials.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/c__coding/" target="_blank" class="social-btn" title="Instagram @c__coding">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                    <p style="margin-top: 0.5rem;">@c__coding</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                © 2025 BookStore. All rights reserved. Made with ❤️ by Animesh
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample Books Data
+        const books = [
+            {
+                id: 1,
+                title: "Brahmastra Booklet",
+                class: "X",
+                subject: "All Subjects",
+                author: "Next Toppers",
+                edition: "2025-2026",
+                cover: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=400&fit=crop",
+                rating: 4.8,
+                downloads: 1234,
+                pages: 250,
+                size: "15 MB",
+                featured: true
+            },
+            {
+                id: 2,
+                title: "RD Sharma Mathematics",
+                class: "X",
+                subject: "Mathematics",
+                author: "RD Sharma",
+                edition: "2023-2024",
+                cover: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=300&h=400&fit=crop",
+                rating: 4.6,
+                downloads: 2156,
+                pages: 450,
+                size: "25 MB",
+                featured: true
+            },
+            {
+                id: 3,
+                title: "NCERT Science",
+                class: "X",
+                subject: "Science",
+                author: "NCERT",
+                edition: "2024-2025",
+                cover: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=300&h=400&fit=crop",
+                rating: 4.9,
+                downloads: 3421,
+                pages: 320,
+                size: "20 MB",
+                featured: true
+            },
+            {
+                id: 4,
+                title: "English Literature",
+                class: "X",
+                subject: "English",
+                author: "CBSE",
+                edition: "2024-2025",
+                cover: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=400&fit=crop",
+                rating: 4.7,
+                downloads: 1876,
+                pages: 280,
+                size: "18 MB",
+                featured: false
+            },
+            {
+                id: 5,
+                title: "Social Studies",
+                class: "X",
+                subject: "Social Science",
+                author: "NCERT",
+                edition: "2024-2025",
+                cover: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=300&h=400&fit=crop",
+                rating: 4.5,
+                downloads: 1543,
+                pages: 300,
+                size: "22 MB",
+                featured: false
+            },
+            {
+                id: 6,
+                title: "Oswaal Sample Papers",
+                class: "X",
+                subject: "All Subjects",
+                author: "Oswaal",
+                edition: "2024-2025",
+                cover: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=300&h=400&fit=crop",
+                rating: 4.8,
+                downloads: 2987,
+                pages: 200,
+                size: "12 MB",
+                featured: true
+            }
+        ];
+
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+        function createBookCard(book, isFeatured = false) {
+            const isFav = favorites.includes(book.id);
+            return `
+                <div class="book-card ${isFeatured ? 'featured' : ''}">
+                    <div class="book-cover">
+                        <img src="${book.cover}" alt="${book.title}">
+                        ${isFeatured ? `
+                            <div class="featured-badge">
+                                <i class="fas fa-star"></i>
+                                Featured
+                            </div>
+                        ` : ''}
+                        <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite(${book.id})">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-meta">Class ${book.class} • ${book.subject}</div>
+                        <div class="book-author">by ${book.author} • ${book.edition}</div>
+                        <div class="book-stats">
+                            <div class="stat">
+                                <i class="fas fa-star"></i>
+                                <span>${book.rating}</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-download"></i>
+                                <span>${book.downloads}</span>
+                            </div>
+                            <div class="stat" style="font-size: 0.75rem;">
+                                ${book.pages} pages • ${book.size}
+                            </div>
+                        </div>
+                        <div class="book-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                            <button class="btn btn-success">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayBooks() {
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const classFilter = document.getElementById('classFilter').value;
+            const subjectFilter = document.getElementById('subjectFilter').value;
+
+            const filteredBooks = books.filter(book => {
+                const matchesSearch = book.title.toLowerCase().includes(searchQuery) ||
+                                    book.author.toLowerCase().includes(searchQuery);
+                const matchesClass = classFilter === 'all' || book.class === classFilter;
+                const matchesSubject = subjectFilter === 'all' || book.subject === subjectFilter;
+                return matchesSearch && matchesClass && matchesSubject;
+            });
+
+            const featuredBooks = filteredBooks.filter(book => book.featured);
+            const allFilteredBooks = filteredBooks;
+
+            document.getElementById('featuredBooks').innerHTML = featuredBooks.map(book => createBookCard(book, true)).join('');
+            document.getElementById('allBooks').innerHTML = allFilteredBooks.map(book => createBookCard(book)).join('');
+            document.getElementById('bookCount').textContent = `(${allFilteredBooks.length})`;
+
+            document.getElementById('noResults').style.display = allFilteredBooks.length === 0 ? 'block' : 'none';
+            document.getElementById('allBooks').style.display = allFilteredBooks.length === 0 ? 'none' : 'grid';
+        }
+
+        function filterBooks() {
+            displayBooks();
+        }
+
+        function toggleFavorite(bookId) {
+            if (favorites.includes(bookId)) {
+                favorites = favorites.filter(id => id !== bookId);
+            } else {
+                favorites.push(bookId);
+            }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            displayBooks();
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.querySelector('.theme-toggle i');
+            
+            if (body.classList.contains('light')) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function toggleFilters() {
+            const filters = document.getElementById('filters');
+            filters.classList.toggle('show');
+        }
+
+        // Load saved theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
+                document.querySelector('.theme-toggle i').classList.remove('fa-moon');
+                document.querySelector('.theme-toggle i').classList.add('fa-sun');
+            }
+            displayBooks();
+        });
+    </script>
+</body>
+</html>
